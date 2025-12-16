@@ -8,25 +8,49 @@ Technical specifications for skill components.
 
 ```yaml
 ---
-name: Skill Name
+name: skill-name
 description: Comprehensive description including all trigger conditions.
 ---
 ```
 
-**name**: Short, descriptive name (1-4 words)
+**name**:
+- Lowercase letters, numbers, and hyphens only
+- Max 64 characters
+- Example: `pdf-editor`, `git-automation`, `skill-creator`
 
-**description**: This is the PRIMARY trigger mechanism. Include:
-- What the skill does
-- When to use it (all trigger conditions)
-- Concrete trigger phrases
+**description**:
+- Max 1024 characters
+- This is the PRIMARY trigger mechanism. Include:
+  - What the skill does
+  - When to use it (all trigger conditions)
+  - Concrete trigger phrases
 
 **Example**:
 ```yaml
 ---
-name: PDF Editor
+name: pdf-editor
 description: Edit, rotate, merge, and manipulate PDF files. Use when user wants to modify PDFs, extract pages, combine documents, or fill forms. Triggers on "edit pdf", "rotate pdf", "merge pdfs", "pdf form".
 ---
 ```
+
+### Optional Fields
+
+**allowed-tools**: Restrict which tools Claude can use when skill is active.
+
+```yaml
+---
+name: code-reviewer
+description: Review code for best practices. Use when reviewing code or PRs.
+allowed-tools: Read, Grep, Glob
+---
+```
+
+When specified:
+- Claude can ONLY use listed tools (no permission prompts)
+- Useful for read-only skills or security-sensitive workflows
+- Native tools: Read, Write, Edit, Bash, Grep, Glob, WebFetch, etc.
+
+**Note**: MCP tools have their own permission model in settings.json. Whether they can be specified in `allowed-tools` is not confirmed in official docs.
 
 ### Do NOT Include
 
@@ -192,3 +216,29 @@ Available in hooks and scripts:
 | Duplicated content | Wastes context | Single source of truth |
 | No trigger examples | Hard to activate | Add EXAMPLES to cookbook |
 | Hardcoded paths | Not portable | Use $CLAUDE_PROJECT_DIR |
+
+## Terminology Note
+
+### `cookbook/` vs `references/`
+
+| Term | Source | Purpose |
+|------|--------|---------|
+| `references/` | Official Anthropic docs | Documentation loaded into context |
+| `cookbook/` | This skill lab | Same purpose, more evocative naming |
+
+Both follow the same philosophy: **progressive disclosure** (on-demand loading).
+
+We use `cookbook/` because it suggests "recipes" and "patterns" - practical, actionable guidance. The official term `references/` is more generic. Either works; they're functionally identical.
+
+## Official Tools
+
+Anthropic provides automation scripts in `anthropics/skills` repo:
+
+| Script | Purpose | When Useful |
+|--------|---------|-------------|
+| `init_skill.py` | Scaffold new skill (creates SKILL.md + dirs) | Starting from scratch |
+| `package_skill.py` | Validate + create .skill zip | Distributing via plugins |
+
+**Our approach**: We coach understanding over automation. The scripts are useful for distribution; for local development, understanding the structure matters more than scaffolding.
+
+**Reference**: [github.com/anthropics/skills](https://github.com/anthropics/skills)

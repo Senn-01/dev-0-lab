@@ -1,5 +1,5 @@
 ---
-name: Skill Creator
+name: skill-creator
 description: Guide users through creating Claude Code skills using IndyDevDan's methodology. Use when the user requests 'create a skill', 'build a skill', 'new skill for X', or wants to learn how to create skills. This skill coaches rather than automates - it helps users understand what they're building.
 ---
 
