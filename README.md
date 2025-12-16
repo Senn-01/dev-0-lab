@@ -123,6 +123,28 @@ Copy any skill directory to your project's `.claude/skills/` folder, or to `~/.c
 | Windows | Supported | N/A | Supported |
 | Linux | Not yet | N/A | Supported |
 
+## Examples
+
+The `examples/` directory contains outputs generated using Claude Code skills and plugins.
+
+### Algorithmic Art: Neural Bloom
+
+A generative art piece created using the `algorithmic-art` plugin skill. Demonstrates recursive branching with probabilistic flowering.
+
+```
+examples/algorithmic-art/
+├── neural-bloom-philosophy.md   # Algorithmic manifesto
+└── neural-bloom.html            # Interactive p5.js art (open in browser)
+```
+
+**To view**: `open examples/algorithmic-art/neural-bloom.html`
+
+**Features**:
+- Seeded randomness (reproducible variations)
+- Energy-based growth with golden angle branching
+- Interactive parameter controls
+- PNG export
+
 ## Creating Your Own Skills
 
 Each skill follows this structure:

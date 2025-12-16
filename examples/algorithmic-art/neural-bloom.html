@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Bloom - Generative Art</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --anthropic-dark: #141413;
+            --anthropic-light: #faf9f5;
+            --anthropic-mid-gray: #b0aea5;
+            --anthropic-light-gray: #e8e6dc;
+            --anthropic-orange: #d97757;
+            --anthropic-blue: #6a9bcc;
+            --anthropic-green: #788c5d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--anthropic-light) 0%, #f5f3ee 100%);
+            min-height: 100vh;
+            color: var(--anthropic-dark);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(20, 20, 19, 0.1);
+            overflow-y: auto;
+        }
+
+        .sidebar h1 {
+            font-family: 'Lora', serif;
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--anthropic-dark);
+            margin-bottom: 8px;
+        }
+
+        .sidebar .subtitle {
+            color: var(--anthropic-mid-gray);
+            font-size: 14px;
+            margin-bottom: 32px;
+            line-height: 1.4;
+        }
+
+        .control-section { margin-bottom: 32px; }
+
+        .control-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--anthropic-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-section h3::before {
+            content: '•';
+            color: var(--anthropic-orange);
+            font-weight: bold;
+        }
+
+        .seed-input {
+            width: 100%;
+            background: var(--anthropic-light);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-bottom: 12px;
+            border: 1px solid var(--anthropic-light-gray);
+            text-align: center;
+        }
+
+        .seed-input:focus {
+            outline: none;
+            border-color: var(--anthropic-orange);
+            box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.1);
+            background: white;
+        }
+
+        .seed-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .control-group { margin-bottom: 20px; }
+
+        .control-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--anthropic-dark);
+            margin-bottom: 8px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider-container input[type="range"] {
+            flex: 1;
+            height: 4px;
+            background: var(--anthropic-light-gray);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--anthropic-orange);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            background: #c86641;
+        }
+
+        .value-display {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--anthropic-mid-gray);
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .color-group { margin-bottom: 16px; }
+
+        .color-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--anthropic-mid-gray);
+            margin-bottom: 4px;
+        }
+
+        .color-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-picker-container input[type="color"] {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: none;
+            padding: 0;
+        }
+
+        .color-value {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--anthropic-mid-gray);
+        }
+
+        .button {
+            background: var(--anthropic-orange);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .button:hover {
+            background: #c86641;
+            transform: translateY(-1px);
+        }
+
+        .button.secondary { background: var(--anthropic-blue); }
+        .button.secondary:hover { background: #5a8bb8; }
+        .button.tertiary { background: var(--anthropic-green); }
+        .button.tertiary:hover { background: #6b7b52; }
+
+        .button-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .button-row .button { flex: 1; }
+
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+        }
+
+        #canvas-container {
+            width: 100%;
+            max-width: 1000px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(20, 20, 19, 0.1);
+            background: white;
+        }
+
+        #canvas-container canvas {
+            display: block;
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--anthropic-mid-gray);
+            padding: 100px;
+        }
+
+        @media (max-width: 600px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>Neural Bloom</h1>
+            <div class="subtitle">Recursive branching with probabilistic flowering. Ideas becoming form through computational emergence.</div>
+
+            <!-- Seed Section -->
+            <div class="control-section">
+                <h3>Seed</h3>
+                <input type="number" id="seed-input" class="seed-input" value="42" onchange="updateSeed()">
+                <div class="seed-controls">
+                    <button class="button secondary" onclick="previousSeed()">← Prev</button>
+                    <button class="button secondary" onclick="nextSeed()">Next →</button>
+                </div>
+                <button class="button tertiary" onclick="randomSeedAndUpdate()">↻ Random</button>
+            </div>
+
+            <!-- Parameters Section -->
+            <div class="control-section">
+                <h3>Parameters</h3>
+
+                <div class="control-group">
+                    <label>Initial Branches</label>
+                    <div class="slider-container">
+                        <input type="range" id="initialBranches" min="1" max="8" step="1" value="3" oninput="updateParam('initialBranches', this.value)">
+                        <span class="value-display" id="initialBranches-value">3</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Growth Speed</label>
+                    <div class="slider-container">
+                        <input type="range" id="growthSpeed" min="0.5" max="4" step="0.5" value="2" oninput="updateParam('growthSpeed', this.value)">
+                        <span class="value-display" id="growthSpeed-value">2</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Branch Probability</label>
+                    <div class="slider-container">
+                        <input type="range" id="branchProb" min="0.01" max="0.08" step="0.01" value="0.03" oninput="updateParam('branchProb', this.value)">
+                        <span class="value-display" id="branchProb-value">0.03</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Energy Decay</label>
+                    <div class="slider-container">
+                        <input type="range" id="energyDecay" min="0.990" max="0.999" step="0.001" value="0.996" oninput="updateParam('energyDecay', this.value)">
+                        <span class="value-display" id="energyDecay-value">0.996</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Bloom Size</label>
+                    <div class="slider-container">
+                        <input type="range" id="bloomSize" min="3" max="20" step="1" value="8" oninput="updateParam('bloomSize', this.value)">
+                        <span class="value-display" id="bloomSize-value">8</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Angle Variance</label>
+                    <div class="slider-container">
+                        <input type="range" id="angleVariance" min="0.1" max="0.8" step="0.05" value="0.35" oninput="updateParam('angleVariance', this.value)">
+                        <span class="value-display" id="angleVariance-value">0.35</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colors Section -->
+            <div class="control-section">
+                <h3>Colors</h3>
+
+                <div class="color-group">
+                    <label>Branch Color</label>
+                    <div class="color-picker-container">
+                        <input type="color" id="branchColor" value="#2d4a3e" onchange="updateColor('branchColor', this.value)">
+                        <span class="color-value" id="branchColor-value">#2d4a3e</span>
+                    </div>
+                </div>
+
+                <div class="color-group">
+                    <label>Bloom Primary</label>
+                    <div class="color-picker-container">
+                        <input type="color" id="bloomColor1" value="#d97757" onchange="updateColor('bloomColor1', this.value)">
+                        <span class="color-value" id="bloomColor1-value">#d97757</span>
+                    </div>
+                </div>
+
+                <div class="color-group">
+                    <label>Bloom Secondary</label>
+                    <div class="color-picker-container">
+                        <input type="color" id="bloomColor2" value="#e8a87c" onchange="updateColor('bloomColor2', this.value)">
+                        <span class="color-value" id="bloomColor2-value">#e8a87c</span>
+                    </div>
+                </div>
+
+                <div class="color-group">
+                    <label>Bloom Accent</label>
+                    <div class="color-picker-container">
+                        <input type="color" id="bloomColor3" value="#c97b63" onchange="updateColor('bloomColor3', this.value)">
+                        <span class="color-value" id="bloomColor3-value">#c97b63</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Section -->
+            <div class="control-section">
+                <h3>Actions</h3>
+                <div class="button-row">
+                    <button class="button" onclick="resetParameters()">Reset</button>
+                    <button class="button secondary" onclick="saveCanvas('neural-bloom-' + params.seed + '.png')">Download</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas-area">
+            <div id="canvas-container">
+                <div class="loading">Initializing Neural Bloom...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════════════
+        // NEURAL BLOOM PARAMETERS
+        // ═══════════════════════════════════════════════════════════════════════
+
+        let params = {
+            seed: 42,
+            initialBranches: 3,
+            growthSpeed: 2,
+            branchProb: 0.03,
+            energyDecay: 0.996,
+            bloomSize: 8,
+            angleVariance: 0.35,
+            branchColor: '#2d4a3e',
+            bloomColors: ['#d97757', '#e8a87c', '#c97b63']
+        };
+
+        let defaultParams = JSON.parse(JSON.stringify(params));
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // NEURAL BLOOM ALGORITHM
+        // ═══════════════════════════════════════════════════════════════════════
+
+        let branches = [];
+        let blooms = [];
+        let isGrowing = true;
+        const GOLDEN_ANGLE = 137.5 * Math.PI / 180; // Phyllotaxis angle
+
+        function setup() {
+            let canvas = createCanvas(1200, 1200);
+            canvas.parent('canvas-container');
+            document.querySelector('.loading').style.display = 'none';
+            initializeSystem();
+        }
+
+        function initializeSystem() {
+            randomSeed(params.seed);
+            noiseSeed(params.seed);
+
+            branches = [];
+            blooms = [];
+            isGrowing = true;
+
+            background(250, 249, 245);
+
+            // Create initial branches from center bottom
+            let startX = width / 2;
+            let startY = height - 100;
+
+            for (let i = 0; i < params.initialBranches; i++) {
+                let baseAngle = -PI / 2; // Pointing up
+                let spread = map(i, 0, params.initialBranches - 1, -0.4, 0.4);
+                if (params.initialBranches === 1) spread = 0;
+
+                let angle = baseAngle + spread + random(-0.1, 0.1);
+                branches.push(new Branch(startX, startY, angle, 1.0, 0));
+            }
+        }
+
+        function draw() {
+            if (!isGrowing) return;
+
+            let activeBranches = 0;
+
+            for (let branch of branches) {
+                if (branch.alive) {
+                    branch.grow();
+                    branch.display();
+                    activeBranches++;
+                }
+            }
+
+            // Draw blooms on top
+            for (let bloom of blooms) {
+                bloom.display();
+            }
+
+            if (activeBranches === 0) {
+                isGrowing = false;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // BRANCH CLASS - Recursive growth with energy inheritance
+        // ═══════════════════════════════════════════════════════════════════════
+
+        class Branch {
+            constructor(x, y, angle, energy, generation) {
+                this.x = x;
+                this.y = y;
+                this.prevX = x;
+                this.prevY = y;
+                this.angle = angle;
+                this.energy = energy;
+                this.generation = generation;
+                this.alive = true;
+                this.age = 0;
+                this.hasBlooomed = false;
+
+                // Thickness based on energy
+                this.thickness = map(energy, 0, 1, 0.5, 8);
+            }
+
+            grow() {
+                if (!this.alive) return;
+
+                this.age++;
+
+                // Store previous position
+                this.prevX = this.x;
+                this.prevY = this.y;
+
+                // Add noise-based angle perturbation
+                let noiseVal = noise(this.x * 0.003, this.y * 0.003, params.seed * 0.1);
+                let angleOffset = map(noiseVal, 0, 1, -params.angleVariance, params.angleVariance);
+                this.angle += angleOffset * 0.1;
+
+                // Slight upward bias
+                this.angle += ((-PI/2) - this.angle) * 0.001;
+
+                // Move forward
+                let speed = params.growthSpeed * this.energy;
+                this.x += cos(this.angle) * speed;
+                this.y += sin(this.angle) * speed;
+
+                // Decay energy
+                this.energy *= params.energyDecay;
+                this.thickness = map(this.energy, 0, 1, 0.3, 8);
+
+                // Check for branching
+                if (random() < params.branchProb * this.energy && this.generation < 12) {
+                    this.branch();
+                }
+
+                // Check for death
+                if (this.energy < 0.05 || this.y < 50 || this.x < 50 || this.x > width - 50) {
+                    this.die();
+                }
+            }
+
+            branch() {
+                // Golden angle branching with randomization
+                let branchAngle1 = this.angle + GOLDEN_ANGLE * random(0.3, 0.7);
+                let branchAngle2 = this.angle - GOLDEN_ANGLE * random(0.3, 0.7);
+
+                // Energy split - children inherit fraction of parent energy
+                let childEnergy = this.energy * random(0.6, 0.8);
+
+                // Randomly choose one or two branches
+                if (random() < 0.6) {
+                    // Single branch
+                    let angle = random() < 0.5 ? branchAngle1 : branchAngle2;
+                    branches.push(new Branch(this.x, this.y, angle, childEnergy, this.generation + 1));
+                } else {
+                    // Double branch (fork)
+                    branches.push(new Branch(this.x, this.y, branchAngle1, childEnergy * 0.7, this.generation + 1));
+                    branches.push(new Branch(this.x, this.y, branchAngle2, childEnergy * 0.7, this.generation + 1));
+                }
+            }
+
+            die() {
+                this.alive = false;
+                if (!this.hasBlooomed && this.generation > 2) {
+                    this.hasBlooomed = true;
+                    blooms.push(new Bloom(this.x, this.y, this.energy));
+                }
+            }
+
+            display() {
+                let col = color(params.branchColor);
+                col.setAlpha(map(this.energy, 0, 1, 100, 255));
+                stroke(col);
+                strokeWeight(this.thickness);
+                line(this.prevX, this.prevY, this.x, this.y);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // BLOOM CLASS - Terminal flowers at branch ends
+        // ═══════════════════════════════════════════════════════════════════════
+
+        class Bloom {
+            constructor(x, y, energy) {
+                this.x = x;
+                this.y = y;
+                this.size = params.bloomSize * random(0.5, 1.5) * (1 + energy);
+                this.colorIndex = floor(random(params.bloomColors.length));
+                this.alpha = 0;
+                this.targetAlpha = random(150, 230);
+                this.petals = floor(random(5, 9));
+                this.rotation = random(TWO_PI);
+            }
+
+            display() {
+                // Fade in
+                this.alpha = lerp(this.alpha, this.targetAlpha, 0.1);
+
+                push();
+                translate(this.x, this.y);
+                rotate(this.rotation);
+
+                noStroke();
+                let col = color(params.bloomColors[this.colorIndex]);
+                col.setAlpha(this.alpha);
+
+                // Draw petals
+                for (let i = 0; i < this.petals; i++) {
+                    let angle = (TWO_PI / this.petals) * i;
+                    let px = cos(angle) * this.size * 0.5;
+                    let py = sin(angle) * this.size * 0.5;
+
+                    fill(col);
+                    ellipse(px, py, this.size * 0.6, this.size * 0.4);
+                }
+
+                // Center
+                let centerCol = color(params.bloomColors[(this.colorIndex + 1) % params.bloomColors.length]);
+                centerCol.setAlpha(this.alpha);
+                fill(centerCol);
+                ellipse(0, 0, this.size * 0.3);
+
+                pop();
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // UI CONTROL HANDLERS
+        // ═══════════════════════════════════════════════════════════════════════
+
+        function updateParam(paramName, value) {
+            params[paramName] = parseFloat(value);
+            document.getElementById(paramName + '-value').textContent = value;
+            initializeSystem();
+        }
+
+        function updateColor(colorId, value) {
+            document.getElementById(colorId + '-value').textContent = value;
+            if (colorId === 'branchColor') {
+                params.branchColor = value;
+            } else if (colorId === 'bloomColor1') {
+                params.bloomColors[0] = value;
+            } else if (colorId === 'bloomColor2') {
+                params.bloomColors[1] = value;
+            } else if (colorId === 'bloomColor3') {
+                params.bloomColors[2] = value;
+            }
+            initializeSystem();
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // SEED CONTROL FUNCTIONS
+        // ═══════════════════════════════════════════════════════════════════════
+
+        function updateSeedDisplay() {
+            document.getElementById('seed-input').value = params.seed;
+        }
+
+        function updateSeed() {
+            let input = document.getElementById('seed-input');
+            let newSeed = parseInt(input.value);
+            if (newSeed && newSeed > 0) {
+                params.seed = newSeed;
+                initializeSystem();
+            } else {
+                updateSeedDisplay();
+            }
+        }
+
+        function previousSeed() {
+            params.seed = Math.max(1, params.seed - 1);
+            updateSeedDisplay();
+            initializeSystem();
+        }
+
+        function nextSeed() {
+            params.seed = params.seed + 1;
+            updateSeedDisplay();
+            initializeSystem();
+        }
+
+        function randomSeedAndUpdate() {
+            params.seed = Math.floor(Math.random() * 999999) + 1;
+            updateSeedDisplay();
+            initializeSystem();
+        }
+
+        function resetParameters() {
+            params = JSON.parse(JSON.stringify(defaultParams));
+
+            // Update all UI elements
+            document.getElementById('initialBranches').value = params.initialBranches;
+            document.getElementById('initialBranches-value').textContent = params.initialBranches;
+            document.getElementById('growthSpeed').value = params.growthSpeed;
+            document.getElementById('growthSpeed-value').textContent = params.growthSpeed;
+            document.getElementById('branchProb').value = params.branchProb;
+            document.getElementById('branchProb-value').textContent = params.branchProb;
+            document.getElementById('energyDecay').value = params.energyDecay;
+            document.getElementById('energyDecay-value').textContent = params.energyDecay;
+            document.getElementById('bloomSize').value = params.bloomSize;
+            document.getElementById('bloomSize-value').textContent = params.bloomSize;
+            document.getElementById('angleVariance').value = params.angleVariance;
+            document.getElementById('angleVariance-value').textContent = params.angleVariance;
+
+            document.getElementById('branchColor').value = params.branchColor;
+            document.getElementById('branchColor-value').textContent = params.branchColor;
+            document.getElementById('bloomColor1').value = params.bloomColors[0];
+            document.getElementById('bloomColor1-value').textContent = params.bloomColors[0];
+            document.getElementById('bloomColor2').value = params.bloomColors[1];
+            document.getElementById('bloomColor2-value').textContent = params.bloomColors[1];
+            document.getElementById('bloomColor3').value = params.bloomColors[2];
+            document.getElementById('bloomColor3-value').textContent = params.bloomColors[2];
+
+            updateSeedDisplay();
+            initializeSystem();
+        }
+
+        window.addEventListener('load', function() {
+            updateSeedDisplay();
+        });
+    </script>
+</body>
+</html>

@@ -1,7 +1,12 @@
 ---
-version: 0.1.0
+version: 0.2.0
 date: 2025-12-16
 changelog:
+  - version: 0.2.0
+    changes:
+      - Added examples/ directory for skill outputs
+      - Created Neural Bloom algorithmic art (p5.js generative art)
+      - Demonstrated algorithmic-art plugin skill usage
   - version: 0.1.0
     changes:
       - Forked from disler/fork-repository-skill
@@ -10,9 +15,11 @@ changelog:
       - Added hooks skill (Claude Code lifecycle automation)
       - Configured Stop and Notification hooks for user alerts
 rationale: |
-  User wanted to learn Claude Code skills by example. Starting from an existing
-  fork-terminal skill, we expanded into a skills lab with reusable patterns.
-  Key insight: osascript + hooks = Claude can notify user when done or waiting.
+  Skills lab evolves beyond skill creation into skill usage demonstration.
+  The examples/ directory shows what skills can produce - bridging the gap
+  between "here's how to build skills" and "here's what they create".
+  Neural Bloom demonstrates plugin skills (algorithmic-art) producing
+  real, interactive artifacts.
 ---
 
 # Handoff Document
@@ -33,10 +40,18 @@ rationale: |
 │   └── needs-input.sh         # Notification + speech when idle
 ├── skills/
 │   ├── fork-terminal/         # Original: spawn terminals with AI agents
-│   ├── osascript/             # NEW: macOS automation
-│   └── hooks/                 # NEW: Claude Code hooks reference
+│   ├── osascript/             # macOS automation
+│   └── hooks/                 # Claude Code hooks reference
 └── commands/
     └── prime.md               # Codebase primer command
+
+examples/
+└── algorithmic-art/
+    ├── neural-bloom-philosophy.md   # Algorithmic manifesto
+    └── neural-bloom.html            # Interactive p5.js generative art
+
+ai-docs/
+└── handoff.md                 # This file (LLM context continuity)
 ```
 
 ## Skills Overview
@@ -74,6 +89,7 @@ EOF
 1. **Fork terminal** - Spawns Claude/Codex/Gemini in new terminals
 2. **osascript** - Tested: notifications, speech, terminal automation
 3. **Hooks** - Configured for Stop and idle_prompt events
+4. **Plugin skills** - Used algorithmic-art to create Neural Bloom generative art
 
 ## Next Steps (Suggestions)
 
@@ -82,10 +98,16 @@ EOF
 - Test hooks in live Claude Code session (`/hooks` to verify)
 - Consider global installation: `~/.claude/skills/`
 
-## Files Changed This Session
+## Files Changed (v0.2.0)
+
+- `examples/algorithmic-art/` - NEW: Neural Bloom generative art
+- `README.md` - Added Examples section
+
+## Files Changed (v0.1.0)
 
 - `README.md` - Rebranded, added skills documentation
 - `.claude/settings.json` - NEW: hooks configuration
 - `.claude/hooks/*.sh` - NEW: notification scripts
 - `.claude/skills/osascript/` - NEW: 6 files
 - `.claude/skills/hooks/` - NEW: 6 files
+- `ai-docs/handoff.md` - NEW: LLM handoff document
