@@ -24,16 +24,21 @@ A pre-configured Claude Code setup with hooks, skills, and commands.
 | Command | Purpose |
 |---------|---------|
 | `/prime` | Understand codebase (README + git history + handoff) |
+| `/research [topic]` | Deep research with specialized agents → `ai-docs/research-{topic}.md` |
 | `/handoff [hint]` | Update handoff doc with current state (Claude infers from git) |
 | `/commit [hint]` | Generate conventional commit, approve, optionally push |
 | `/ship [hint]` | Full flow: handoff → README check → commit → push |
+| `/mcp` | Load MCP tool reference (Tavily, Context7 params) |
 
 **Examples:**
 ```
+/prime                          # Understand codebase
+/research "authentication"      # Deep research before implementation
 /handoff                        # Update LLM context
 /commit                         # Just commit
 /ship                           # Full workflow: docs → commit → push
 /ship "added new template"      # With hint
+/mcp                            # Before MCP-heavy work
 ```
 
 ## Installation

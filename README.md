@@ -153,6 +153,7 @@ Slash commands for common workflows:
 | Command | Purpose |
 |---------|---------|
 | `/prime` | Understand codebase (README + git history + handoff) |
+| `/research [topic]` | Deep research with specialized agents → `ai-docs/research-{topic}.md` |
 | `/handoff [hint]` | Update LLM context in `ai-docs/handoff.md` |
 | `/commit [hint]` | Generate conventional commit, approve, optionally push |
 | `/ship [hint]` | Full workflow: handoff → README check → commit → push |
@@ -161,6 +162,7 @@ Slash commands for common workflows:
 **Examples:**
 ```
 /prime                          # Onboard to codebase
+/research "Claude SDK"          # Deep research before implementation
 /handoff                        # Update LLM context
 /commit                         # Just commit
 /ship "added new feature"       # Full workflow

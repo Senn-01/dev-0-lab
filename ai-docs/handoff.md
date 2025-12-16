@@ -1,13 +1,23 @@
 ---
-version: 0.4.3
+version: 0.5.0
 updated: 2025-12-16
-last-session: added /mcp command for MCP tool reference
+last-session: added /research command for deep external research
 rationale: |
-  Knowledge enables efficiency. When using MCP tools (Tavily, Context7),
-  Claude now has a reference guide with all parameters, costs, and best
-  practices. The /mcp command loads this before MCP-heavy work, ensuring
-  Claude asks about parameters instead of assuming defaults.
+  Research before implementation prevents wasted effort. The /research command
+  provides structured knowledge acquisition with specialized agents (Concept,
+  Docs, Examples, Ecosystem researchers), ULTRATHINK strategy phase, approval
+  gates for deep research, and comprehensive output to ai-docs/research-{topic}.md.
+  Inspired by research-code.md patterns: read-first discipline, wait-for-all,
+  metadata tracking, follow-up handling.
 changelog:
+  - version: 0.5.0
+    changes:
+      - Added /research command for deep external research
+      - ULTRATHINK phase for strategy with backpropagation thinking
+      - Specialized agents (Concept, Docs, Examples, Ecosystem)
+      - Conditional approval gate (quick vs deep research)
+      - Structured output with metadata and query tracking
+      - Follow-up handling (append to same doc)
   - version: 0.4.3
     changes:
       - Added /mcp command for MCP tool reference
@@ -43,14 +53,16 @@ changelog:
 
 ## Now
 
-v0.4.3 - Added `/mcp` command. Run before MCP-heavy work to load tool reference with parameters, costs, and best practices.
+v0.5.0 - Added `/research` command for deep external research before implementation. Uses specialized agents, ULTRATHINK strategy, approval gates.
 
 ## Decisions
 
+- **Research before implementation** - /research produces understanding docs
+- **Specialized agents** - Concept, Docs, Examples, Ecosystem researchers
+- **ULTRATHINK for strategy** - Deep reasoning with backpropagation
+- **Conditional approval** - Quick (<3 queries) auto-executes, deep requires approval
 - **ASK before MCP execution** - /mcp directive instructs Claude to clarify params
 - **Lowercase skill names** - Official spec: lowercase, numbers, hyphens only
-- **cookbook = references** - Same philosophy, our naming is more evocative
-- **Trust Claude for /ship** - no prompts, auto-push
 
 ## Gotchas
 
@@ -59,9 +71,11 @@ v0.4.3 - Added `/mcp` command. Run before MCP-heavy work to load tool reference 
 - Skills auto-trigger, no `/command` needed
 - MCP tools in allowed-tools: unconfirmed if supported
 - Tavily advanced search = 2 credits (vs 1 for basic)
+- /research outputs to `ai-docs/research-{topic-slug}.md`
 
 ## Next
 
+- [ ] Test /research command with real topic
 - [ ] Test repo-template in fresh repo
 - [ ] Add skill activation hook (P0 from retrospective)
 - [ ] Consider global installation `~/.claude/skills/`
