@@ -1,24 +1,27 @@
 ---
-version: 0.4.2
+version: 0.4.3
 updated: 2025-12-16
-last-session: aligned skill-creator with official Anthropic standards
+last-session: added /mcp command for MCP tool reference
 rationale: |
-  Quality over speed. After researching official Anthropic docs, we found
-  our skill-creator needed alignment: name field must be lowercase,
-  allowed-tools feature was undocumented, and terminology differences
-  (cookbook vs references) needed clarification. Now exhaustive without
-  being complex.
+  Knowledge enables efficiency. When using MCP tools (Tavily, Context7),
+  Claude now has a reference guide with all parameters, costs, and best
+  practices. The /mcp command loads this before MCP-heavy work, ensuring
+  Claude asks about parameters instead of assuming defaults.
 changelog:
+  - version: 0.4.3
+    changes:
+      - Added /mcp command for MCP tool reference
+      - Documented Tavily parameters (include_answer, chunks_per_source, etc.)
+      - Added credit costs and best practices
+      - Behavior directive to ASK before executing MCP tools
   - version: 0.4.2
     changes:
       - Fixed skill-creator name field (lowercase per official spec)
       - Documented allowed-tools frontmatter feature
       - Clarified cookbook vs references terminology
-      - Added reference to official Anthropic scripts
   - version: 0.4.1
     changes:
       - Restored changelog to YAML frontmatter
-      - Added rationale field for version bumps
       - Automated /ship (no prompts, auto-push)
   - version: 0.4.0
     changes:
@@ -40,14 +43,13 @@ changelog:
 
 ## Now
 
-v0.4.2 - Skill-creator aligned with official Anthropic standards. Researched docs, fixed gaps, documented differences.
+v0.4.3 - Added `/mcp` command. Run before MCP-heavy work to load tool reference with parameters, costs, and best practices.
 
 ## Decisions
 
+- **ASK before MCP execution** - /mcp directive instructs Claude to clarify params
 - **Lowercase skill names** - Official spec: lowercase, numbers, hyphens only
-- **allowed-tools documented** - Security feature for restricting tool access
 - **cookbook = references** - Same philosophy, our naming is more evocative
-- **Coaching > automation** - We explain; official scripts scaffold
 - **Trust Claude for /ship** - no prompts, auto-push
 
 ## Gotchas
@@ -56,7 +58,7 @@ v0.4.2 - Skill-creator aligned with official Anthropic standards. Researched doc
 - osascript needs macOS notification permissions
 - Skills auto-trigger, no `/command` needed
 - MCP tools in allowed-tools: unconfirmed if supported
-- `/ship` pushes automatically - use `/commit` if you want control
+- Tavily advanced search = 2 credits (vs 1 for basic)
 
 ## Next
 

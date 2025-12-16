@@ -156,6 +156,7 @@ Slash commands for common workflows:
 | `/handoff [hint]` | Update LLM context in `ai-docs/handoff.md` |
 | `/commit [hint]` | Generate conventional commit, approve, optionally push |
 | `/ship [hint]` | Full workflow: handoff → README check → commit → push |
+| `/mcp` | Load MCP tool reference (Tavily, Context7 params + best practices) |
 
 **Examples:**
 ```
@@ -163,6 +164,7 @@ Slash commands for common workflows:
 /handoff                        # Update LLM context
 /commit                         # Just commit
 /ship "added new feature"       # Full workflow
+/mcp                            # Before MCP-heavy work
 ```
 
 ## Installation
