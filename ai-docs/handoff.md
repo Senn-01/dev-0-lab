@@ -1,129 +1,56 @@
 ---
-version: 0.3.0
-date: 2025-12-16
-changelog:
-  - version: 0.3.0
-    changes:
-      - Added skill-creator meta-skill (IndyDevDan methodology)
-      - Implements Core Four framework (Context, Model, Prompt, Tools)
-      - Coaching approach: human-driven, AI-assisted
-      - Tavily MCP for verification instead of assumptions
-  - version: 0.2.0
-    changes:
-      - Added examples/ directory for skill outputs
-      - Created Neural Bloom algorithmic art (p5.js generative art)
-      - Demonstrated algorithmic-art plugin skill usage
-  - version: 0.1.0
-    changes:
-      - Forked from disler/fork-repository-skill
-      - Rebranded as Claude Skills Lab (learning environment)
-      - Added osascript skill (macOS automation via AppleScript/JXA)
-      - Added hooks skill (Claude Code lifecycle automation)
-      - Configured Stop and Notification hooks for user alerts
-rationale: |
-  The skill-creator completes the skills lab vision: learn by doing.
-  Based on IndyDevDan's methodology from skills-from-scratch.md:
-  - "Begin with end in mind" - plan before coding
-  - "Core Four" - master the primitives
-  - "In-loop agentic coding" - human orchestrates, AI assists
-  Key addition: Tavily MCP for verification (don't assume Claude knows).
+updated: 2025-12-16
+last-session: added repo-template and workflow commands
 ---
 
-# Handoff Document
+# Handoff
 
-## Context
+## Now
 
-**Repo**: `Senn-01/claude-skills-lab`
-**Purpose**: Learning environment for Claude Code skills
-**Started from**: `disler/fork-repository-skill` (fork-terminal skill only)
+v0.4.0 - Added `examples/repo-template/` as a starter kit for new repos. Created workflow commands: `/handoff`, `/commit`, `/ship`.
 
-## Current State
+## Decisions
+
+- **Conventional commits** - Using standard types (feat, fix, docs, refactor, chore) for git log as changelog
+- **Handoff structure** - Short and fresh > comprehensive and stale. Focus on WHY not WHAT
+- **Command philosophy** - Granular (`/handoff`, `/commit`) + combined (`/ship`) for flexibility
+- **macOS only** - Hooks use osascript, no cross-platform needed
+
+## Gotchas
+
+- Hooks require `chmod +x .claude/hooks/*.sh`
+- osascript needs macOS notification permissions
+- Skills auto-trigger from conversation, no `/command` needed
+- Handoff.md format changed - now simpler (Now, Decisions, Gotchas, Next)
+
+## Next
+
+- [ ] Test repo-template in fresh repo
+- [ ] Consider global installation `~/.claude/skills/`
+- [ ] Add PreToolUse validation hooks cookbook
+
+## Structure
 
 ```
 .claude/
-├── settings.json              # Hooks config (Stop + idle_prompt)
-├── hooks/
-│   ├── task-complete.sh       # Notification on task finish
-│   └── needs-input.sh         # Notification + speech when idle
-├── skills/
-│   ├── fork-terminal/         # Original: spawn terminals with AI agents
-│   ├── osascript/             # macOS automation
-│   ├── hooks/                 # Claude Code hooks reference
-│   └── skill-creator/         # Meta-skill: create skills (IndyDevDan method)
-└── commands/
-    └── prime.md               # Codebase primer command
+├── commands/
+│   ├── prime.md       # Understand codebase
+│   ├── handoff.md     # Update LLM context
+│   ├── commit.md      # Conventional commit
+│   └── ship.md        # Full workflow
+├── hooks/             # Notification scripts
+├── settings.json      # Hooks config
+└── skills/            # 4 skills
 
 examples/
-└── algorithmic-art/
-    ├── neural-bloom-philosophy.md   # Algorithmic manifesto
-    └── neural-bloom.html            # Interactive p5.js generative art
-
-ai-docs/
-└── handoff.md                 # This file (LLM context continuity)
+├── algorithmic-art/   # Neural Bloom (p5.js)
+└── repo-template/     # Starter kit for new repos
 ```
 
-## Skills Overview
+## Files Changed (v0.4.0)
 
-| Skill | Trigger | Purpose |
-|-------|---------|---------|
-| fork-terminal | "fork terminal use X to..." | Spawn AI agents in new terminals |
-| osascript | "osascript", "applescript" | macOS automation (notifications, apps, system) |
-| hooks | "configure hook", "add hook" | Claude Code lifecycle automation |
-| skill-creator | "create a skill", "build a skill" | Meta-skill: guide skill creation |
-
-## Key Patterns
-
-### Skill Structure
-```
-.claude/skills/<name>/
-├── SKILL.md           # Triggers, variables, workflow, cookbook routing
-└── cookbook/          # Domain-specific patterns (one file per use case)
-```
-
-### Hooks Configuration
-Hooks live in `.claude/settings.json`. Key events:
-- `Stop` - Claude finished responding
-- `Notification` (matcher: `idle_prompt`) - Claude waiting for input
-
-### osascript Best Practice
-Always use heredocs to avoid quote escaping:
-```bash
-osascript <<'EOF'
-display notification "message" with title "title"
-EOF
-```
-
-## What's Working
-
-1. **Fork terminal** - Spawns Claude/Codex/Gemini in new terminals
-2. **osascript** - Tested: notifications, speech, terminal automation
-3. **Hooks** - Configured for Stop and idle_prompt events
-4. **Plugin skills** - Used algorithmic-art to create Neural Bloom generative art
-5. **Skill creator** - Meta-skill using IndyDevDan's Core Four methodology
-
-## Next Steps (Suggestions)
-
-- Add more skills (git automation, project scaffolding)
-- Add cookbook for PreToolUse validation hooks
-- Test hooks in live Claude Code session (`/hooks` to verify)
-- Consider global installation: `~/.claude/skills/`
-
-## Files Changed (v0.3.0)
-
-- `.claude/skills/skill-creator/` - NEW: 6 files (meta-skill)
-- `README.md` - Added skill-creator documentation
-- `ai-docs/handoff.md` - Updated with IndyDevDan methodology
-
-## Files Changed (v0.2.0)
-
-- `examples/algorithmic-art/` - NEW: Neural Bloom generative art
-- `README.md` - Added Examples section
-
-## Files Changed (v0.1.0)
-
-- `README.md` - Rebranded, added skills documentation
-- `.claude/settings.json` - NEW: hooks configuration
-- `.claude/hooks/*.sh` - NEW: notification scripts
-- `.claude/skills/osascript/` - NEW: 6 files
-- `.claude/skills/hooks/` - NEW: 6 files
-- `ai-docs/handoff.md` - NEW: LLM handoff document
+- `examples/repo-template/` - NEW: 25 files (starter template)
+- `.claude/commands/handoff.md` - NEW: update LLM context
+- `.claude/commands/commit.md` - NEW: conventional commits
+- `.claude/commands/ship.md` - NEW: full workflow
+- `ai-docs/handoff.md` - Simplified format

@@ -146,6 +146,25 @@ Guide for creating Claude Code skills using IndyDevDan's methodology. Coaches ra
 → Guides you through planning, structure, implementation, testing
 ```
 
+## Commands
+
+Slash commands for common workflows:
+
+| Command | Purpose |
+|---------|---------|
+| `/prime` | Understand codebase (README + git history + handoff) |
+| `/handoff [hint]` | Update LLM context in `ai-docs/handoff.md` |
+| `/commit [hint]` | Generate conventional commit, approve, optionally push |
+| `/ship [hint]` | Full workflow: handoff → README check → commit → push |
+
+**Examples:**
+```
+/prime                          # Onboard to codebase
+/handoff                        # Update LLM context
+/commit                         # Just commit
+/ship "added new feature"       # Full workflow
+```
+
 ## Installation
 
 Copy any skill directory to your project's `.claude/skills/` folder, or to `~/.claude/skills/` for personal use across all projects.
@@ -160,7 +179,24 @@ Copy any skill directory to your project's `.claude/skills/` folder, or to `~/.c
 
 ## Examples
 
-The `examples/` directory contains outputs generated using Claude Code skills and plugins.
+The `examples/` directory contains outputs and templates.
+
+### Repo Template
+
+A starter kit for new repositories with pre-configured Claude Code setup.
+
+```
+examples/repo-template/
+├── .claude/
+│   ├── settings.json      # Hooks config
+│   ├── hooks/             # Notification scripts
+│   ├── commands/          # /prime, /handoff, /commit, /ship
+│   └── skills/            # osascript, hooks, skill-creator
+└── ai-docs/
+    └── handoff.md         # LLM context template
+```
+
+**To use**: Copy `.claude/` and `ai-docs/` to your new project.
 
 ### Algorithmic Art: Neural Bloom
 
