@@ -146,6 +146,57 @@ Guide for creating Claude Code skills using IndyDevDan's methodology. Coaches ra
 → Guides you through planning, structure, implementation, testing
 ```
 
+### 5. Data Analyst Skill
+
+Professional data analysis workflow with emphasis on WHY, not just HOW. Follows CRISP-DM methodology for pre-ML phases.
+
+```
+.claude/skills/data-analyst/
+├── SKILL.md                    # Core philosophy + phase routing
+└── cookbook/
+    ├── philosophy.md           # Core principles (always read)
+    ├── understand/             # Business understanding phase
+    │   ├── why.md
+    │   ├── questions.md        # 5W1H stakeholder framework
+    │   ├── checklist.md
+    │   └── template.md
+    ├── explore/                # EDA phase
+    │   ├── why.md
+    │   ├── techniques.md       # Statistical techniques
+    │   ├── checklist.md
+    │   └── code.md             # Python patterns
+    ├── clean/                  # Data preparation phase
+    │   ├── why.md
+    │   ├── pipeline.md         # 7-step cleaning pipeline
+    │   ├── strategies.md       # Missing/outlier/duplicate handling
+    │   └── code.md
+    └── validate/               # Quality validation phase
+        ├── why.md
+        ├── dimensions.md       # 6 quality dimensions
+        ├── thresholds.md       # Pass/fail criteria
+        └── code.md
+```
+
+**Triggers**: "data analysis", "analyze data", "EDA", "data cleaning", "data quality"
+
+**The 4 Phases**:
+| Phase | Command | Purpose |
+|-------|---------|---------|
+| 1. Business Understanding | `/data-understand` | Define the problem before touching data |
+| 2. Data Understanding | `/data-explore` | Explore data, form hypotheses |
+| 3. Data Preparation | `/data-clean` | Transform raw to analysis-ready |
+| 4. Quality Validation | `/data-validate` | Certify data meets standards |
+
+**Philosophy**: Every step explains WHY before HOW. Outputs go to `ai-docs/data-{phase}-{project}.md`.
+
+**Example**:
+```
+/data-understand customer churn   # Define the problem
+/data-explore sales.csv           # Run EDA
+/data-clean                       # Clean based on EDA findings
+/data-validate                    # Certify quality
+```
+
 ## Commands
 
 Slash commands for common workflows:
@@ -158,6 +209,10 @@ Slash commands for common workflows:
 | `/commit [hint]` | Generate conventional commit, approve, optionally push |
 | `/ship [hint]` | Full workflow: handoff → README check → commit → push |
 | `/mcp` | Load MCP tool reference (Tavily, Context7 params + best practices) |
+| `/data-understand [project]` | Define business problem (phase 1/4) |
+| `/data-explore [file]` | Run EDA on dataset (phase 2/4) |
+| `/data-clean [file]` | Clean data based on EDA (phase 3/4) |
+| `/data-validate [file]` | Certify data quality (phase 4/4) |
 
 **Examples:**
 ```
@@ -167,6 +222,8 @@ Slash commands for common workflows:
 /commit                         # Just commit
 /ship "added new feature"       # Full workflow
 /mcp                            # Before MCP-heavy work
+/data-understand churn analysis # Define the problem
+/data-explore sales.csv         # Explore dataset
 ```
 
 ## Installation
@@ -175,11 +232,11 @@ Copy any skill directory to your project's `.claude/skills/` folder, or to `~/.c
 
 ## Platform Support
 
-| Platform | Fork Terminal | osascript | Hooks | Skill Creator |
-|----------|---------------|-----------|-------|---------------|
-| macOS | Supported | Supported | Supported | Supported |
-| Windows | Supported | N/A | Supported | Supported |
-| Linux | Not yet | N/A | Supported | Supported |
+| Platform | Fork Terminal | osascript | Hooks | Skill Creator | Data Analyst |
+|----------|---------------|-----------|-------|---------------|--------------|
+| macOS | Supported | Supported | Supported | Supported | Supported |
+| Windows | Supported | N/A | Supported | Supported | Supported |
+| Linux | Not yet | N/A | Supported | Supported | Supported |
 
 ## Examples
 

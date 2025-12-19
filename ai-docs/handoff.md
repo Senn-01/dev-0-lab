@@ -1,15 +1,22 @@
 ---
-version: 0.5.0
-updated: 2025-12-16
-last-session: added /research command for deep external research
+version: 0.6.0
+updated: 2025-12-18
+last-session: added data-analyst skill with 4-phase workflow
 rationale: |
-  Research before implementation prevents wasted effort. The /research command
-  provides structured knowledge acquisition with specialized agents (Concept,
-  Docs, Examples, Ecosystem researchers), ULTRATHINK strategy phase, approval
-  gates for deep research, and comprehensive output to ai-docs/research-{topic}.md.
-  Inspired by research-code.md patterns: read-first discipline, wait-for-all,
-  metadata tracking, follow-up handling.
+  Data analysis needs structure, not just tools. The data-analyst skill implements
+  CRISP-DM pre-ML phases with emphasis on WHY each step matters. Philosophy-first
+  approach: every action explained before execution. Skill + thin command pattern
+  keeps philosophy centralized while commands provide entry points.
 changelog:
+  - version: 0.6.0
+    changes:
+      - Added data-analyst skill (5th skill)
+      - 4-phase workflow: understand → explore → clean → validate
+      - Philosophy.md with core analyst principles (always read)
+      - WHY-first pattern in every phase
+      - Commands: /data-understand, /data-explore, /data-clean, /data-validate
+      - 17 cookbook files covering techniques, checklists, code patterns
+      - Outputs to ai-docs/data-{phase}-{project}.md
   - version: 0.5.0
     changes:
       - Added /research command for deep external research
@@ -53,15 +60,17 @@ changelog:
 
 ## Now
 
-v0.5.0 - Added `/research` command for deep external research before implementation. Uses specialized agents, ULTRATHINK strategy, approval gates.
+v0.6.0 - Added **data-analyst skill** with 4-phase workflow (understand → explore → clean → validate). Philosophy-first: explains WHY before HOW. Based on CRISP-DM pre-ML phases.
 
 ## Decisions
 
+- **WHY-first pattern** - Every phase explains principles before actions
+- **Philosophy hub** - `cookbook/philosophy.md` read before any phase
+- **Skill + thin commands** - Skill centralizes logic, commands are entry points
+- **Outputs to ai-docs/** - `ai-docs/data-{phase}-{project}.md` format
 - **Research before implementation** - /research produces understanding docs
 - **Specialized agents** - Concept, Docs, Examples, Ecosystem researchers
 - **ULTRATHINK for strategy** - Deep reasoning with backpropagation
-- **Conditional approval** - Quick (<3 queries) auto-executes, deep requires approval
-- **ASK before MCP execution** - /mcp directive instructs Claude to clarify params
 - **Lowercase skill names** - Official spec: lowercase, numbers, hyphens only
 
 ## Gotchas
@@ -72,10 +81,12 @@ v0.5.0 - Added `/research` command for deep external research before implementat
 - MCP tools in allowed-tools: unconfirmed if supported
 - Tavily advanced search = 2 credits (vs 1 for basic)
 - /research outputs to `ai-docs/research-{topic-slug}.md`
+- /data-* commands output to `ai-docs/data-{phase}-{project}.md`
 
 ## Next
 
-- [ ] Test /research command with real topic
+- [ ] Test data-analyst skill on real dataset
+- [ ] Add data-analyst to examples/repo-template/
 - [ ] Test repo-template in fresh repo
 - [ ] Add skill activation hook (P0 from retrospective)
 - [ ] Consider global installation `~/.claude/skills/`
