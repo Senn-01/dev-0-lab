@@ -1,13 +1,20 @@
 ---
-version: 0.6.0
-updated: 2025-12-18
-last-session: added data-analyst skill with 4-phase workflow
+version: 0.6.1
+updated: 2025-12-19
+last-session: added /md command for LLM-readable markdown generation
 rationale: |
-  Data analysis needs structure, not just tools. The data-analyst skill implements
-  CRISP-DM pre-ML phases with emphasis on WHY each step matters. Philosophy-first
-  approach: every action explained before execution. Skill + thin command pattern
-  keeps philosophy centralized while commands provide entry points.
+  Consistent markdown formatting requires explicit guidance. The /md command
+  enforces user preferences: YAML frontmatter (rationale, changelog, linked_files),
+  IDKW style (front-load info, no vague pronouns, structured formats), and
+  hierarchical headings. Research confirmed structured formats optimal for LLM input.
 changelog:
+  - version: 0.6.1
+    changes:
+      - Added /md command for LLM-readable markdown generation
+      - Research doc on LLM-readable markdown patterns
+      - IDKW style principles documented
+      - YAML frontmatter schema (rationale, changelog, linked_files)
+      - Clarified prose vs structure (OUTPUT vs INPUT distinction)
   - version: 0.6.0
     changes:
       - Added data-analyst skill (5th skill)
@@ -60,10 +67,13 @@ changelog:
 
 ## Now
 
-v0.6.0 - Added **data-analyst skill** with 4-phase workflow (understand → explore → clean → validate). Philosophy-first: explains WHY before HOW. Based on CRISP-DM pre-ML phases.
+v0.6.1 - Added **/md command** for LLM-readable markdown. Researched optimal patterns: IDKW style, structured formats (lists/tables), YAML frontmatter with rationale/changelog. Key insight: "prose preference" applies to LLM OUTPUT, not INPUT docs.
 
 ## Decisions
 
+- **IDKW style** - Front-load info, no vague pronouns, structured formats
+- **Structured > prose for INPUT** - Lists, tables, headings for LLM-readable docs
+- **YAML frontmatter standard** - rationale, changelog (semver 0.1.0+), linked_files
 - **WHY-first pattern** - Every phase explains principles before actions
 - **Philosophy hub** - `cookbook/philosophy.md` read before any phase
 - **Skill + thin commands** - Skill centralizes logic, commands are entry points
