@@ -1,13 +1,23 @@
 ---
-version: 0.6.1
-updated: 2025-12-19
-last-session: added /md command for LLM-readable markdown generation
+version: 0.7.0
+updated: 2025-12-20
+last-session: enhanced skill-creator with official Anthropic patterns
 rationale: |
-  Consistent markdown formatting requires explicit guidance. The /md command
-  enforces user preferences: YAML frontmatter (rationale, changelog, linked_files),
-  IDKW style (front-load info, no vague pronouns, structured formats), and
-  hierarchical headings. Research confirmed structured formats optimal for LLM input.
+  Deep analysis revealed skill-creator had excellent philosophy (IndyDevDan methodology)
+  but gaps in tactical guidance compared to official Anthropic docs. Added: description
+  writing guidance (PRIMARY trigger mechanism), allowed-tools integration into workflow,
+  debugging cookbook, and limitations section. These align with official patterns while
+  preserving the coaching-first approach.
 changelog:
+  - version: 0.7.0
+    changes:
+      - Enhanced skill-creator with official Anthropic patterns
+      - Added description writing guidance (front-load 100 chars, action verbs)
+      - Integrated allowed-tools into planning workflow
+      - Created 5-debug.md debugging cookbook
+      - Added limitations section (no skill chains, no persistent state)
+      - Added tool pattern quick-reference (read-only, script, generation)
+      - Synced all changes to examples/repo-template/
   - version: 0.6.1
     changes:
       - Added /md command for LLM-readable markdown generation
@@ -67,10 +77,13 @@ changelog:
 
 ## Now
 
-v0.6.1 - Added **/md command** for LLM-readable markdown. Researched optimal patterns: IDKW style, structured formats (lists/tables), YAML frontmatter with rationale/changelog. Key insight: "prose preference" applies to LLM OUTPUT, not INPUT docs.
+v0.7.0 - Enhanced **skill-creator** with official Anthropic patterns. Added description writing guidance (front-load 100 chars, action verbs), integrated allowed-tools into planning workflow, created 5-debug.md cookbook, added limitations section. All changes synced to repo-template.
 
 ## Decisions
 
+- **Description is PRIMARY trigger** - Front-load first 100 chars, use action verbs
+- **allowed-tools in planning** - Decide tool access level during Step 1 (Plan)
+- **5-step skill workflow** - Plan → Structure → Implement → Verify → Debug
 - **IDKW style** - Front-load info, no vague pronouns, structured formats
 - **Structured > prose for INPUT** - Lists, tables, headings for LLM-readable docs
 - **YAML frontmatter standard** - rationale, changelog (semver 0.1.0+), linked_files
@@ -92,6 +105,9 @@ v0.6.1 - Added **/md command** for LLM-readable markdown. Researched optimal pat
 - Tavily advanced search = 2 credits (vs 1 for basic)
 - /research outputs to `ai-docs/research-{topic-slug}.md`
 - /data-* commands output to `ai-docs/data-{phase}-{project}.md`
+- Skills cannot invoke other Skills (no skill chains)
+- No persistent state between skill invocations
+- Description length impacts activation accuracy
 
 ## Next
 

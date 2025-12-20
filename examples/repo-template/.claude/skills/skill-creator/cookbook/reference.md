@@ -25,6 +25,23 @@ description: Comprehensive description including all trigger conditions.
   - When to use it (all trigger conditions)
   - Concrete trigger phrases
 
+### Description Best Practices
+
+| Rule | Why |
+|------|-----|
+| **Front-load first 100 chars** | Most important info first for matching |
+| **Use action verbs** | "Analyzes", "Generates" (not "Can analyze") |
+| **Define trigger contexts** | "Use when user requests...", "Activate for..." |
+| **Include trigger phrases** | Explicit keywords that should activate |
+| **Be specific** | Avoid overlap with other skills |
+
+### Description Template
+
+```
+[Action verb] [what it does]. Use when [trigger contexts].
+Triggers on "[phrase 1]", "[phrase 2]", "[phrase 3]".
+```
+
 **Example**:
 ```yaml
 ---
@@ -48,7 +65,22 @@ allowed-tools: Read, Grep, Glob
 When specified:
 - Claude can ONLY use listed tools (no permission prompts)
 - Useful for read-only skills or security-sensitive workflows
-- Native tools: Read, Write, Edit, Bash, Grep, Glob, WebFetch, etc.
+
+### allowed-tools Quick Reference
+
+| Pattern | Tools | Use Case |
+|---------|-------|----------|
+| **Read-only** | `Read, Grep, Glob` | Code review, analysis, no modifications |
+| **Script execution** | `Bash, Read` | Running linters, formatters, builds |
+| **File generation** | `Write, Read, Glob` | Scaffolding, templates, code gen |
+| **Web access** | `WebFetch, WebSearch` | External documentation, research |
+| **Full access** | (omit field) | All operations needed |
+
+### Native Tools (exact names)
+
+```
+Read, Write, Edit, Bash, Grep, Glob, WebFetch, WebSearch, LSP, Task, TodoWrite, NotebookEdit
+```
 
 **Note**: MCP tools have their own permission model in settings.json. Whether they can be specified in `allowed-tools` is not confirmed in official docs.
 

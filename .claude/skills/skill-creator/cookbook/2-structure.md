@@ -104,6 +104,16 @@ Before creating structure, answer:
    - Only if Claude lacks domain knowledge
    - Verify with Tavily before assuming Claude doesn't know
 
+5. **What tool access level?** (from planning phase)
+   - Read-only: `allowed-tools: Read, Grep, Glob`
+   - Script execution: `allowed-tools: Bash, Read`
+   - File generation: `allowed-tools: Write, Read, Glob`
+   - Full access: omit `allowed-tools` field
+
+6. **Personal or project skill?**
+   - Personal (`~/.claude/skills/`): Available across all projects
+   - Project (`.claude/skills/`): Git-tracked, team-shared
+
 ## Example: Structure for "git-automation" Skill
 
 ```
@@ -117,9 +127,19 @@ Before creating structure, answer:
     └── conventions.md        # Team git conventions (if any)
 ```
 
+**SKILL.md frontmatter**:
+```yaml
+---
+name: git-automation
+description: Automates git workflows: branch creation, PR preparation, and remote sync. Use when user requests git automation. Triggers on "git skill", "git automation", "prepare PR".
+allowed-tools: Bash, Read
+---
+```
+
 **Rationale**:
 - 3 cookbook files = 3 distinct use cases
 - No scripts = git CLI is sufficient
+- `allowed-tools: Bash, Read` = needs git execution + file reading
 - references/ only if team has custom conventions
 
 ## Next Step

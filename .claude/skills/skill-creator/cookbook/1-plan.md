@@ -22,6 +22,11 @@ Before designing anything, ask the user:
    - Alternative phrasings
    - What should NOT trigger it
 
+4. **What tool access is needed?**
+   - Read-only analysis? Full file access?
+   - Does it need Bash execution?
+   - Security implications?
+
 ## Apply Core Four Analysis
 
 For each concrete example, analyze:
@@ -32,6 +37,53 @@ For each concrete example, analyze:
 | **Model** | Does this need fast responses (haiku)? Complex reasoning (opus)? Default is fine? |
 | **Prompt** | What instructions will guide Claude? Conditional logic? Cookbook routing? |
 | **Tools** | What scripts are needed? What resources? External APIs? |
+
+## Craft the Description
+
+The description is the **PRIMARY trigger mechanism**. This is the most important text you'll write.
+
+### Description Rules
+
+1. **Front-load key info** - First 100 chars must contain core purpose
+2. **Use action verbs** - "Analyzes X", "Generates Y" (not "Can analyze")
+3. **Define trigger contexts** - "Use when user requests...", "Activate for..."
+4. **Include trigger phrases** - Explicit keywords that should activate
+5. **Be specific** - Avoid overlap with other skills
+
+### Description Anti-Patterns
+
+| Bad | Why | Good |
+|-----|-----|------|
+| "This skill helps with various tasks" | Vague, overlaps everything | "Analyzes Python test files for coverage gaps" |
+| "Can be used for multiple purposes" | No trigger context | "Use when user asks about test quality" |
+| "A useful automation tool" | No action verb, no specifics | "Automates git workflows: branching, PR prep, sync" |
+
+### Description Template
+
+```
+[Action verb] [what it does]. Use when [trigger contexts].
+Triggers on "[phrase 1]", "[phrase 2]", "[phrase 3]".
+```
+
+**Example**:
+```
+Analyzes Python test files to identify coverage gaps and anti-patterns.
+Use when user asks about test quality, coverage, or test improvements.
+Triggers on "test coverage", "review tests", "missing tests".
+```
+
+## Determine Tool Access
+
+What tools does this skill need? **Grant minimum necessary access.**
+
+| Access Level | allowed-tools | Use When |
+|--------------|---------------|----------|
+| **Read-only** | `Read, Grep, Glob` | Analysis, review, no modifications |
+| **Script execution** | `Bash, Read` | Running linters, formatters, builds |
+| **File generation** | `Write, Read, Glob` | Scaffolding, templates, code gen |
+| **Full access** | (omit field) | All operations needed |
+
+**Security principle**: If a skill only reads code, restrict it to read-only tools. This prevents accidental modifications.
 
 ## Identify Reusable Components
 
@@ -52,7 +104,9 @@ Before proceeding, you should have:
 2. Concrete examples (2-3 with expected behavior)
 3. Trigger phrases (primary + alternatives)
 4. Core Four analysis for each example
-5. List of reusable components needed
+5. Draft description (following the template)
+6. Tool access decision (read-only, script, generation, or full)
+7. List of reusable components needed
 ```
 
 ## Example: Planning a "git-automation" Skill
@@ -71,6 +125,15 @@ Before proceeding, you should have:
 - Model: Default (no special needs)
 - Prompt: Route to cookbook based on operation type
 - Tools: Git CLI (verify flags with `git <command> --help`)
+
+**Description** (draft):
+```
+Automates git workflows: branch creation, PR preparation, and remote sync.
+Use when user requests git automation or repetitive git operations.
+Triggers on "git skill", "git automation", "prepare PR", "sync branch".
+```
+
+**Tool Access**: `Bash, Read` (needs to execute git commands and read files)
 
 **Components**:
 - references/workflows.md - Common git workflows

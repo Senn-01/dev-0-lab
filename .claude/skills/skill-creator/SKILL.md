@@ -61,10 +61,27 @@ Follow these steps IN ORDER. Do not skip planning.
 - TEST every script before committing
 - ITERATE based on real usage
 
+### Step 5: Debug (when needed)
+
+- IF: Skill not activating, wrong behavior, or errors
+- THEN: Read `.claude/skills/skill-creator/cookbook/5-debug.md`
+- TROUBLESHOOT systematically before asking for help
+
 ## Reference
 
 For specs on frontmatter, resources, and progressive disclosure:
 - Read `.claude/skills/skill-creator/cookbook/reference.md`
+
+## Limitations
+
+Be aware of these constraints when designing skills:
+
+| Limitation | Implication |
+|------------|-------------|
+| Skills cannot invoke other Skills | Don't design skill chains |
+| No persistent state between invocations | Each invocation is fresh |
+| Description length impacts activation | Longer = less precise matching |
+| Tool restrictions at execution time | Cannot dynamically expand access |
 
 ## Anti-Patterns
 

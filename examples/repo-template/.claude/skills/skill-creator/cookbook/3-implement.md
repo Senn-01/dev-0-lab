@@ -15,12 +15,16 @@ Now create the files. Document rationale at each step.
 
 ```yaml
 ---
-name: Your Skill Name
+name: your-skill-name
 description: What this skill does. Use when user requests X, Y, or Z. Include all trigger conditions here - the body is only loaded AFTER triggering.
+allowed-tools: Read, Grep, Glob  # Optional: restrict tool access
 ---
 ```
 
-**Critical**: The `description` is the primary trigger mechanism. Be comprehensive.
+**Field requirements**:
+- `name`: Lowercase, hyphens, numbers only (max 64 chars)
+- `description`: The PRIMARY trigger mechanism (max 1024 chars). Front-load first 100 chars.
+- `allowed-tools`: Optional. Omit for full access, specify for restrictions.
 
 ### Body Structure
 
