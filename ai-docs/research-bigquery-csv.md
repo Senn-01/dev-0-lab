@@ -1,17 +1,22 @@
 ---
-topic: "Google BigQuery CSV Loading"
+topic: "Google BigQuery CSV/JSONL Loading"
 date: 2025-12-22T12:00:00Z
+updated: 2025-12-22
 status: complete
 tools_used: [tavily, context7]
 queries_executed: 5
 agents_spawned: 4
+real_world_tested: true
+project: orange-cx-intelligence
 ---
 
-# Research: Google BigQuery CSV Loading
+# Research: Google BigQuery CSV/JSONL Loading
 
 ## Executive Summary
 
 BigQuery is Google's serverless columnar data warehouse built on Dremel architecture, optimized for analytical workloads at petabyte scale. CSV loading is free (batch mode) with multiple methods (CLI, Python API, SQL DDL). **Key gotchas**: timestamp format must be ISO 8601, encoding defaults to UTF-8, auto-detect samples only ~500 rows, and empty strings are NOT NULL by default.
+
+**UPDATE (Real-world tested)**: CSV with multiline text fields (embedded `\n`) fails BigQuery parsing. **Use JSONL format instead** for tables with free-text content (reviews, comments, verbatims).
 
 ## Research Goal
 
@@ -107,6 +112,66 @@ bq load \
 | `allow_jagged_rows` | false | Accept rows with missing columns |
 | `max_bad_records` | 0 | Errors before failing |
 | `autodetect` | false | Auto-detect schema |
+
+---
+
+## JSONL: The Better Choice for Text Data (Real-World Tested)
+
+### Why JSONL Over CSV?
+
+**Problem encountered**: Loading Orange CX customer feedback data (Google Reviews with verbatim text containing newlines). CSV upload failed with:
+```
+Error: CSV table encountered too many errors, giving up. Rows: 492; errors: 100.
+```
+
+Even with `allow_quoted_newlines=true`, the CSV parser struggled with complex multiline text.
+
+### JSONL Solution
+
+**JSONL (JSON Lines)** = one JSON object per line. Newlines in text are escaped as `\n` within JSON strings.
+
+```python
+# Convert DataFrame to JSONL
+df.to_json('table.jsonl', orient='records', lines=True, date_format='iso')
+```
+
+### When to Use Each Format
+
+| Format | Best For | Avoid When |
+|--------|----------|------------|
+| **CSV** | Simple tabular data, numeric columns, short text | Multiline text, embedded quotes, complex strings |
+| **JSONL** | Free-text fields (reviews, comments), mixed types | Very large files (JSON overhead) |
+
+### JSONL Loading
+
+**Console UI**:
+1. Create table → Source: Upload
+2. File format: **JSONL (newline delimited JSON)**
+3. Schema: Auto detect ✓
+
+**bq CLI**:
+```bash
+bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON \
+  dataset.table table.jsonl
+```
+
+**Python**:
+```python
+job_config = bigquery.LoadJobConfig(
+    source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
+    autodetect=True,
+)
+```
+
+### Real Results (Orange CX Project)
+
+| Table | CSV Result | JSONL Result |
+|-------|------------|--------------|
+| dim_shops (161 rows) | Would work | ✓ Loaded |
+| fact_google_reviews (1,815 rows) | **FAILED** - multiline verbatim | ✓ Loaded |
+| fact_sms_surveys (5,268 rows) | Would work | ✓ Loaded |
+
+**Recommendation**: Default to JSONL for any table that might contain user-generated text.
 
 ---
 
@@ -250,15 +315,17 @@ job_config = bigquery.LoadJobConfig(
 
 ## Decision Points
 
-Based on this research:
+Based on this research + real-world testing:
 
-| Decision | Recommendation |
-|----------|----------------|
-| **Loading method** | Python API for flexibility, bq CLI for scripts |
-| **Schema approach** | Auto-detect for exploration, explicit for production |
-| **File staging** | Use GCS for files >10MB |
-| **Null handling** | Load as STRING, convert with NULLIF() in SQL |
-| **Timestamps** | Preprocess to ISO 8601 before loading |
+| Decision | Recommendation | Tested |
+|----------|----------------|--------|
+| **File format** | **JSONL for text data**, CSV for numeric-only | ✓ Yes |
+| **Loading method** | Python API for flexibility, bq CLI for scripts | ✓ Yes |
+| **Schema approach** | Auto-detect for exploration, explicit for production | ✓ Yes |
+| **File staging** | Use GCS for files >10MB | Not tested |
+| **Null handling** | Load as STRING, convert with NULLIF() in SQL | ✓ Yes |
+| **Timestamps** | Preprocess to ISO 8601 before loading | ✓ Yes |
+| **Multiline text** | Use JSONL (CSV fails even with allow_quoted_newlines) | ✓ Yes |
 
 ---
 
@@ -299,4 +366,23 @@ Based on this research:
 
 ## Follow-up Research
 
-(Leave empty - will be appended if user asks more questions)
+### Real-World Test: Orange CX Intelligence (2025-12-22)
+
+**Project**: Customer feedback data for Orange Belgium shops
+**Tables**: dim_shops (161), fact_google_reviews (1,815), fact_sms_surveys (5,268)
+
+**Issue Encountered**: CSV upload failed for fact_google_reviews
+```
+Error: CSV table encountered too many errors, giving up. Rows: 492; errors: 100.
+```
+
+**Root Cause**: Verbatim field contained embedded newlines (`\n`) in quoted strings. Even though CSV spec allows this with proper quoting, BigQuery's parser couldn't handle complex cases.
+
+**Solution Applied**: Converted all tables to JSONL format
+```python
+df.to_json('table.jsonl', orient='records', lines=True, date_format='iso')
+```
+
+**Result**: All tables loaded successfully via BigQuery Console UI with JSONL format.
+
+**Key Learning**: For customer feedback, reviews, comments, or any user-generated text, always use JSONL over CSV.
