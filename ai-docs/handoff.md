@@ -1,13 +1,22 @@
 ---
-version: 0.8.0
+version: 0.8.1
 updated: 2025-12-22
-last-session: added LangSmith tracing integration for Claude Code
+last-session: tested data-analyst skill on Orange CX Intelligence project
 rationale: |
-  Added observability layer via LangSmith. Stop hook sends conversation traces to
-  LangSmith after each Claude response, enabling session analysis, debugging, and
-  usage monitoring. Based on official LangChain docs. Fixed timing bug where log()
-  was called before state directory existed.
+  First real-world test of data-analyst skill. Ran /data-understand on Orange Belgium
+  customer feedback data (Google Reviews + SMS Surveys). Produced comprehensive business
+  understanding doc with header quality assessment, column mappings, and implementation
+  plan for clean Google Sheets → BigQuery pipeline.
 changelog:
+  - version: 0.8.1
+    changes:
+      - Tested data-analyst skill on real Orange CX Intelligence dataset
+      - Created ai-docs/research-bigquery-csv.md (BigQuery CSV loading best practices)
+      - Created ai-docs/data-understand-orange-cx-intelligence.md
+      - Added header quality assessment with BigQuery naming best practices
+      - Designed 3-table star schema (dim_shops, fact_google_reviews, fact_sms_surveys)
+      - Decided on "Clean Sheets" approach (restructure source vs transform layer)
+      - Added cases/ to .gitignore for test data
   - version: 0.8.0
     changes:
       - Added LangSmith tracing via ~/.claude/hooks/stop_hook.sh
@@ -85,7 +94,7 @@ changelog:
 
 ## Now
 
-v0.8.0 - Added **LangSmith tracing** for Claude Code observability. Stop hook sends traces after each response with hierarchical structure (turn → LLM → tools). Configured in `~/.claude/settings.json`, controlled via env vars. Fixed timing bug in directory creation.
+v0.8.1 - **Tested data-analyst skill** on Orange CX Intelligence project. Ran /data-understand phase on real customer feedback data (4 CSVs: Google Reviews, SMS Surveys, Shop Master, Full Shop Info). Produced comprehensive business understanding doc with header quality assessment, column mappings, and implementation plan. Decided on "Clean Sheets" approach: restructure client's Google Sheets into clean 3-tab format that maps directly to BigQuery (no transformation layer).
 
 ## Decisions
 
@@ -124,7 +133,9 @@ v0.8.0 - Added **LangSmith tracing** for Claude Code observability. Stop hook se
 
 ## Next
 
-- [ ] Test data-analyst skill on real dataset
+- [x] Test data-analyst skill on real dataset (Orange CX Intelligence)
+- [ ] Complete /data-explore phase for Orange CX project
+- [ ] Write migration script for clean Google Sheets
 - [ ] Add data-analyst to examples/repo-template/
 - [ ] Test repo-template in fresh repo
 - [ ] Add skill activation hook (P0 from retrospective)

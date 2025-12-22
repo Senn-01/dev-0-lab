@@ -140,3 +140,6 @@ temp/
 
 # macOS
 .DS_Store
+
+# Test cases / data files
+cases/
