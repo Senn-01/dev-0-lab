@@ -1,14 +1,22 @@
 ---
-version: 0.7.0
-updated: 2025-12-20
-last-session: enhanced skill-creator with official Anthropic patterns
+version: 0.8.0
+updated: 2025-12-22
+last-session: added LangSmith tracing integration for Claude Code
 rationale: |
-  Deep analysis revealed skill-creator had excellent philosophy (IndyDevDan methodology)
-  but gaps in tactical guidance compared to official Anthropic docs. Added: description
-  writing guidance (PRIMARY trigger mechanism), allowed-tools integration into workflow,
-  debugging cookbook, and limitations section. These align with official patterns while
-  preserving the coaching-first approach.
+  Added observability layer via LangSmith. Stop hook sends conversation traces to
+  LangSmith after each Claude response, enabling session analysis, debugging, and
+  usage monitoring. Based on official LangChain docs. Fixed timing bug where log()
+  was called before state directory existed.
 changelog:
+  - version: 0.8.0
+    changes:
+      - Added LangSmith tracing via ~/.claude/hooks/stop_hook.sh
+      - Traces sent to LangSmith after each Claude response
+      - Hierarchical run structure (turn → LLM calls → tool calls)
+      - State persistence across sessions (~/.claude/state/)
+      - Configurable via TRACE_TO_LANGSMITH, CC_LANGSMITH_API_KEY, CC_LANGSMITH_PROJECT
+      - macOS only (requires jq, curl, uuidgen)
+      - Fixed: mkdir -p now runs before first log() call
   - version: 0.7.0
     changes:
       - Enhanced skill-creator with official Anthropic patterns
@@ -77,10 +85,12 @@ changelog:
 
 ## Now
 
-v0.7.0 - Enhanced **skill-creator** with official Anthropic patterns. Added description writing guidance (front-load 100 chars, action verbs), integrated allowed-tools into planning workflow, created 5-debug.md cookbook, added limitations section. All changes synced to repo-template.
+v0.8.0 - Added **LangSmith tracing** for Claude Code observability. Stop hook sends traces after each response with hierarchical structure (turn → LLM → tools). Configured in `~/.claude/settings.json`, controlled via env vars. Fixed timing bug in directory creation.
 
 ## Decisions
 
+- **LangSmith tracing via Stop hook** - Observability layer for Claude Code sessions
+- **Env var control** - TRACE_TO_LANGSMITH=true enables, CC_LANGSMITH_API_KEY for auth
 - **Description is PRIMARY trigger** - Front-load first 100 chars, use action verbs
 - **allowed-tools in planning** - Decide tool access level during Step 1 (Plan)
 - **5-step skill workflow** - Plan → Structure → Implement → Verify → Debug
@@ -98,6 +108,9 @@ v0.7.0 - Enhanced **skill-creator** with official Anthropic patterns. Added desc
 
 ## Gotchas
 
+- LangSmith hook requires `~/.claude/state/` dir (auto-created by script)
+- LangSmith hook macOS only (needs jq, curl, uuidgen)
+- Set CC_LANGSMITH_DEBUG=true for hook debugging in `~/.claude/state/hook.log`
 - Hooks require `chmod +x .claude/hooks/*.sh`
 - osascript needs macOS notification permissions
 - Skills auto-trigger, no `/command` needed
