@@ -1,13 +1,17 @@
 ---
-version: 0.12.0
+version: 0.12.1
 updated: 2025-12-23
-last-session: plugin ecosystem + agent SDK research (Claude Agent SDK vs LangChain/LangGraph)
-rationale: |
-  Exploring Claude Code plugin ecosystem and agent frameworks. Two major outputs:
-  1. Plugin catalog (50 plugins from claude-plugins-official + superpowers)
-  2. Deep research: Claude Agent SDK vs LangChain/LangGraph comparison
-  Key insight: They are complementary, not competitive. MCP unifies them.
+last-session: LangGraph skill TDD baseline test (inconclusive) + superpowers methodology exploration
 changelog:
+  - version: 0.12.1
+    changes:
+      - Tested superpowers:writing-skills TDD methodology for skill creation
+      - Ran baseline tests (3 scenarios) for potential langchain-dev skill
+      - Baseline PASSED - Claude built working LangGraph agents from training knowledge
+      - Inconclusive result - doesn't mean skill not needed, need harder pressure tests
+      - Moved baseline outputs to use-cases/langgraph-baseline-tests/
+      - Installed elements-of-style plugin (Strunk's writing rules)
+      - Documented available MCP tools and plugin catalog reference
   - version: 0.12.0
     changes:
       - Cataloged 50 plugins from claude-plugins-official (36) and superpowers (14)
@@ -131,36 +135,47 @@ changelog:
 
 ## Now
 
-v0.12.0 - **Plugin Ecosystem Exploration** — cataloged 50 plugins from 2 marketplaces.
+v0.12.1 - **Agent Framework Exploration** — testing TDD methodology for skill creation.
 
-### Plugin Sources
+### LangGraph Skill Baseline Test (Inconclusive)
+
+Tested `superpowers:writing-skills` TDD methodology to see if a `langchain-dev` skill is needed:
+
+| Scenario | Result | Observation |
+|----------|--------|-------------|
+| ReAct agent with tools | ✅ PASS | Correct patterns, working code |
+| Multi-step branching workflow | ✅ PASS | Conditional edges, routing logic |
+| Stateful agent with memory | ✅ PASS | Checkpointing, thread isolation |
+
+**Finding:** Claude built working LangGraph agents from training knowledge alone.
+
+**What this means:**
+- Claude already knows LangGraph basics (pre-Jan 2025 knowledge)
+- BUT: didn't use MCP docs for current API (may be outdated)
+- A skill might teach **process discipline** ("always check docs first") not technique
+- Need harder pressure tests or focus on quality/best-practices
+
+Baseline outputs: `use-cases/langgraph-baseline-tests/`
+
+### Available MCP Tools
+
+| Tool | Purpose |
+|------|---------|
+| `mcp__context7__*` | Library documentation lookup |
+| `mcp__tavily__*` | Web search and content extraction |
+| `mcp__docs-langchain__SearchDocsByLangChain` | LangChain/LangGraph docs search |
+| `mcp__ide__*` | VS Code diagnostics, Jupyter execution |
+| `mcp__private-journal__*` | Technical insights journal |
+
+### Plugin Catalog
+
+See full catalog: `ai-docs/plugins-experiment.md` (50 plugins, 4-tier ranking)
 
 | Source | Count | Focus |
 |--------|-------|-------|
-| [claude-plugins-official](https://github.com/anthropics/claude-plugins-official) | 36 | Core dev tools, LSPs, external integrations |
-| [superpowers](https://github.com/obra/superpowers) | 14 | Development methodology (TDD, debugging, planning) |
-
-### S-Tier Plugins (Essential)
-
-| Plugin | Source | Why |
-|--------|--------|-----|
-| **feature-dev** | official | 7-phase structured workflow with parallel agents |
-| **code-review** | official | Automated PR review with confidence scoring |
-| **test-driven-development** | superpowers | RED-GREEN-REFACTOR discipline |
-| **systematic-debugging** | superpowers | 4-phase root cause investigation |
-| **plugin-dev** | official | Comprehensive plugin building toolkit |
-| **github** | external | GitHub API integration |
-| **playwright** | external | Browser automation |
-
-### Use-Cases Status
-
-| Project | Status | Notes |
-|---------|--------|-------|
-| orange-cx-intelligence-agent | **COMPLETE** | 5-phase workflow, 99.9% quality, 3 BigQuery tables |
-| algorithmic-art | **COMPLETE** | Neural Bloom experiment done |
-| init-cc-repo | **ACTIVE** | Will use for plugin experimentation |
-
-See full catalog: `ai-docs/plugins-experiment.md`
+| claude-plugins-official | 36 | Core dev tools, LSPs, integrations |
+| superpowers | 14 | Development methodology |
+| elements-of-style | 1 | Writing quality (NEW) |
 
 ## Data Analyst Methodology (Proven on Orange CX)
 
@@ -338,28 +353,40 @@ shop_info_active = shop_info[shop_info['macro_segment'] != 'CLOSED']
 - **MCP latency** → External plugins may add network overhead
 - **Plugin conflicts** → Skills vs commands vs agents priority unclear
 
+### Skill TDD Insights
+- **Baseline passing ≠ skill not needed** → May mean different skill focus required
+- **Claude uses training memory, not MCP docs** → Unless explicitly instructed
+- **writing-skills methodology** → RED (baseline) → GREEN (skill) → REFACTOR (loopholes)
+- **Technique vs discipline skills** → "How to do X" vs "Always do Y before X"
+
 ## Next
 
 ### Agent Framework Exploration (Current Focus)
 
 **Goal:** Compare Claude Agent SDK vs LangChain/LangGraph by building agents with both.
 
-| Step | Action | Output |
-|------|--------|--------|
-| 1 | Create LangChain/LangGraph skill | `.claude/skills/langchain-dev/` |
-| 2 | Build agent with Claude Agent SDK | `use-cases/agent-sdk-test/` |
-| 3 | Build same agent with LangGraph | `use-cases/langgraph-test/` |
-| 4 | Compare: boilerplate, debugging, DX | `ai-docs/research-agent-sdk-vs-langchain.md` (update) |
+**Current Status:**
+- [x] Baseline test: Claude can build LangGraph agents from memory
+- [ ] Decide: Is a langchain-dev skill needed? (Options below)
+- [ ] Build agent with Claude Agent SDK
+- [ ] Build same agent with LangGraph
+- [ ] Compare: boilerplate, debugging, DX
 
-**Skill Creation Approach:**
-- Use superpowers `writing-skills` methodology (TDD for skills)
-- Already have `agent-sdk-dev` plugin installed
-- Need to create `langchain-dev` skill for parity
+**Langchain-dev Skill Options:**
+
+| Option | Description |
+|--------|-------------|
+| **A. No skill** | Baseline passed, Claude knows LangGraph basics |
+| **B. Quality skill** | Best practices, security, real tool integration |
+| **C. Advanced patterns** | Human-in-the-loop, multi-agent, complex graphs |
+| **D. Process discipline** | "Always use MCP docs first, not training memory" |
+| **E. Harder tests** | Test edge cases that might reveal knowledge gaps |
 
 **Resources:**
 - `ai-docs/research-agent-sdk-vs-langchain.md` — Deep comparison doc
-- `ai-docs/plugins-experiment.md` — Plugin catalog
-- superpowers `writing-skills` — TDD for skill creation
+- `ai-docs/plugins-experiment.md` — Plugin catalog (50 plugins)
+- `use-cases/langgraph-baseline-tests/` — Baseline test outputs
+- superpowers `writing-skills` — TDD methodology for skills
 
 ### Plugin Experimentation (Paused)
 - [ ] Install Phase 1 plugins (feature-dev, code-review, TDD, debugging, plugin-dev)
@@ -369,13 +396,13 @@ shop_info_active = shop_info[shop_info['macro_segment'] != 'CLOSED']
 - [ ] Evaluate superpowers vs official methodology
 
 ### Backlog
-- [ ] Load JSONL files to BigQuery and test queries
-- [ ] Inject data-llm doc into SQL agent and test query generation
+- [x] Load JSONL files to BigQuery and test queries
+- [x] Inject data-llm doc into SQL agent and test query generation
 - [ ] Add data-analyst to init-cc-repo
 - [ ] Test init-cc-repo in fresh repo
 - [ ] Add skill activation hook (P0 from retrospective)
 - [ ] Consider global installation `~/.claude/skills/`
-- [ ] Rename GitHub repo to dev-0-lab (optional)
+- [x] Rename GitHub repo to dev-0-lab (optional)
 
 ### Completed
 - [x] Test data-analyst skill on real dataset (Orange CX Intelligence)

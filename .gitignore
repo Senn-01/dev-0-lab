@@ -143,3 +143,6 @@ temp/
 
 # Test cases / data files
 cases/
+
+# Private journal (MCP tool)
+.private-journal/

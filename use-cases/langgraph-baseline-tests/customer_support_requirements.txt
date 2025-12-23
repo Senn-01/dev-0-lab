@@ -1,0 +1,10 @@
+# Customer Support Workflow Requirements
+# Install using: uv pip install -r customer_support_requirements.txt
+
+langgraph>=0.2.0
+anthropic>=0.40.0
+python-dotenv>=1.0.0
+
+# Optional for graph visualization
+pygraphviz>=1.13
+ipython>=8.12.0
